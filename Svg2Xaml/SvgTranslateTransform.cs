@@ -36,37 +36,37 @@ using System.Windows.Media;
 namespace Svg2Xaml
 {
 
-  //****************************************************************************
-  class SvgTranslateTransform
-    : SvgTransform
-  {
-    public readonly double X;
-    public readonly double Y;
-    
-    //==========================================================================
-    public SvgTranslateTransform(double x, double y)
+    //****************************************************************************
+    class SvgTranslateTransform
+      : SvgTransform
     {
-      X = x;
-      Y = y;
-    }
+        public readonly double X;
+        public readonly double Y;
 
-    //==========================================================================
-    public override Transform ToTransform()
-    {
-      return new TranslateTransform(X, Y);
-    }
+        //==========================================================================
+        public SvgTranslateTransform(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
 
-    //==========================================================================
-    public static new SvgTranslateTransform Parse(string transform)
-    {
-      string[] tokens = transform.Split(new char[] { ' ', '\t', ',' }, StringSplitOptions.RemoveEmptyEntries);
-      if(tokens.Length != 2)
-        throw new FormatException("A translate transformation must have two values");
+        //==========================================================================
+        public override Transform ToTransform()
+        {
+            return new TranslateTransform(X, Y);
+        }
 
-      return new SvgTranslateTransform(Double.Parse(tokens[0].Trim(), CultureInfo.InvariantCulture.NumberFormat),
-                                       Double.Parse(tokens[1].Trim(), CultureInfo.InvariantCulture.NumberFormat));
-    }
+        //==========================================================================
+        public static new SvgTranslateTransform Parse(string transform)
+        {
+            string[] tokens = transform.Split(new char[] { ' ', '\t', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            if (tokens.Length != 1 && tokens.Length != 2)
+                throw new FormatException("A translate transformation must have one or two values");
 
-  } // class SvgTranslateTransform
+            return new SvgTranslateTransform(Double.Parse(tokens[0].Trim(), CultureInfo.InvariantCulture.NumberFormat),
+                                             Double.Parse(tokens.Length == 1 ? tokens[0].Trim() : tokens[1].Trim(), CultureInfo.InvariantCulture.NumberFormat));
+        }
+
+    } // class SvgTranslateTransform
 
 }
