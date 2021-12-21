@@ -37,285 +37,278 @@ using System.Xml.Linq;
 
 namespace Svg2Xaml
 {
-  
-  //****************************************************************************
-  class SvgDrawableContainerBaseElement
-    : SvgContainerBaseElement
-  {
 
-    //==========================================================================
-    public readonly SvgViewbox ViewBox = new SvgViewbox(new Rect(0, 0, 0, 0));
-    public readonly SvgLength Width = null;
-    public readonly SvgLength Height = null;
-    public readonly SvgLength Opacity = new SvgLength(1.0);
-    public readonly SvgLength FillOpacity = new SvgLength(1.0);
-    public readonly SvgLength StrokeOpacity = new SvgLength(1.0);
-    public readonly SvgTransform Transform = null;
-    public readonly SvgPaint Fill = new SvgColorPaint(new SvgColor(0, 0, 0));
-    public readonly SvgPaint Stroke = null; /* new SvgColorPaint(new SvgColor(0, 0, 0)); */
-    public readonly SvgLength StrokeWidth = new SvgLength(1);
-    public readonly SvgStrokeLinecap StrokeLinecap = SvgStrokeLinecap.Butt;
-    public readonly SvgStrokeLinejoin StrokeLinejoin = SvgStrokeLinejoin.Miter;
-    public readonly double StrokeMiterlimit = 4;     // Double.None = inherit
-    public readonly SvgLength StrokeDashoffset = new SvgLength(0);
-    public readonly SvgLength[] StrokeDasharray = null; // null = none, Length[0] = inherit
-    public readonly SvgURL ClipPath = null;
-    public readonly SvgURL Filter = null;
-    public readonly SvgURL Mask = null;
-    public readonly SvgDisplay Display = SvgDisplay.Inline;
-    public readonly SvgFillRule FillRule = SvgFillRule.Nonzero;
-
-    //==========================================================================
-    public SvgDrawableContainerBaseElement(SvgDocument document, SvgBaseElement parent, XElement drawableContainerElement)
-      : base(document, parent, drawableContainerElement)
+    //****************************************************************************
+    class SvgDrawableContainerBaseElement
+      : SvgContainerBaseElement
     {
-      XAttribute viewBox_attribute = drawableContainerElement.Attribute("viewBox");
-      if (viewBox_attribute != null)
-          this.ViewBox = SvgViewbox.Parse(viewBox_attribute.Value);
 
-      XAttribute opacity_attribute = drawableContainerElement.Attribute("opacity");
-      if(opacity_attribute != null)
-        Opacity = SvgLength.Parse(opacity_attribute.Value);
+        //==========================================================================
+        public readonly SvgViewbox ViewBox = new SvgViewbox(new Rect(0, 0, 0, 0));
+        public readonly SvgLength Width = null;
+        public readonly SvgLength Height = null;
+        public readonly SvgLength Opacity = new SvgLength(1.0);
+        public readonly SvgLength FillOpacity = new SvgLength(1.0);
+        public readonly SvgLength StrokeOpacity = new SvgLength(1.0);
+        public readonly SvgTransform Transform = null;
+        public readonly SvgPaint Fill = new SvgColorPaint(new SvgColor(0, 0, 0));
+        public readonly SvgPaint Stroke = null; /* new SvgColorPaint(new SvgColor(0, 0, 0)); */
+        public readonly SvgLength StrokeWidth = new SvgLength(1);
+        public readonly SvgStrokeLinecap StrokeLinecap = SvgStrokeLinecap.Butt;
+        public readonly SvgStrokeLinejoin StrokeLinejoin = SvgStrokeLinejoin.Miter;
+        public readonly double StrokeMiterlimit = 4;     // Double.None = inherit
+        public readonly SvgLength StrokeDashoffset = new SvgLength(0);
+        public readonly SvgLength[] StrokeDasharray = null; // null = none, Length[0] = inherit
+        public readonly SvgURL ClipPath = null;
+        public readonly SvgURL Filter = null;
+        public readonly SvgURL Mask = null;
+        public readonly SvgDisplay Display = SvgDisplay.Inline;
+        public readonly SvgFillRule FillRule = SvgFillRule.Nonzero;
 
-      XAttribute transform_attribute = drawableContainerElement.Attribute("transform");
-      if(transform_attribute != null)
-        Transform = SvgTransform.Parse(transform_attribute.Value);
-
-      XAttribute clip_attribute = drawableContainerElement.Attribute("clip-path");
-      if(clip_attribute != null)
-        ClipPath = SvgURL.Parse(clip_attribute.Value);
-
-      XAttribute filter_attribute = drawableContainerElement.Attribute("filter");
-      if(filter_attribute != null)
-        Filter = SvgURL.Parse(filter_attribute.Value);
-
-      XAttribute mask_attribute = drawableContainerElement.Attribute("mask");
-      if(mask_attribute != null)
-        Mask = SvgURL.Parse(mask_attribute.Value);
-
-      XAttribute display_attribute = drawableContainerElement.Attribute("display");
-      if(display_attribute != null)
-        switch(display_attribute.Value)
+        //==========================================================================
+        public SvgDrawableContainerBaseElement(SvgDocument document, SvgBaseElement parent, XElement drawableContainerElement)
+          : base(document, parent, drawableContainerElement)
         {
-          case "inline":
-            Display = SvgDisplay.Inline;
-            break;
+            XAttribute viewBox_attribute = drawableContainerElement.Attribute("viewBox");
+            if (viewBox_attribute != null)
+                this.ViewBox = SvgViewbox.Parse(viewBox_attribute.Value);
 
-          case "block":
-            Display = SvgDisplay.Block;
-            break;
+            XAttribute opacity_attribute = drawableContainerElement.Attribute("opacity");
+            SvgLength.TryUpdate(ref Opacity, opacity_attribute?.Value);
 
-          case "list-item":
-            Display = SvgDisplay.ListItem;
-            break;
+            XAttribute transform_attribute = drawableContainerElement.Attribute("transform");
+            if (transform_attribute != null)
+                Transform = SvgTransform.Parse(transform_attribute.Value);
 
-          case "run-in":
-            Display = SvgDisplay.RunIn;
-            break;
+            XAttribute clip_attribute = drawableContainerElement.Attribute("clip-path");
+            if (clip_attribute != null)
+                ClipPath = SvgURL.Parse(clip_attribute.Value);
 
-          case "compact":
-            Display = SvgDisplay.Compact;
-            break;
+            XAttribute filter_attribute = drawableContainerElement.Attribute("filter");
+            if (filter_attribute != null)
+                Filter = SvgURL.Parse(filter_attribute.Value);
 
-          case "marker":
-            Display = SvgDisplay.Marker;
-            break;
+            XAttribute mask_attribute = drawableContainerElement.Attribute("mask");
+            if (mask_attribute != null)
+                Mask = SvgURL.Parse(mask_attribute.Value);
 
-          case "table":
-            Display = SvgDisplay.Table;
-            break;
+            XAttribute display_attribute = drawableContainerElement.Attribute("display");
+            if (display_attribute != null)
+                switch (display_attribute.Value)
+                {
+                    case "inline":
+                        Display = SvgDisplay.Inline;
+                        break;
 
-          case "inline-table":
-            Display = SvgDisplay.InlineTable;
-            break;
+                    case "block":
+                        Display = SvgDisplay.Block;
+                        break;
 
-          case "table-row-group":
-            Display = SvgDisplay.TableRowGroup;
-            break;
+                    case "list-item":
+                        Display = SvgDisplay.ListItem;
+                        break;
 
-          case "table-header-group":
-            Display = SvgDisplay.TableHeaderGroup;
-            break;
+                    case "run-in":
+                        Display = SvgDisplay.RunIn;
+                        break;
 
-          case "table-footer-group":
-            Display = SvgDisplay.TableFooterGroup;
-            break;
+                    case "compact":
+                        Display = SvgDisplay.Compact;
+                        break;
 
-          case "table-row":
-            Display = SvgDisplay.TableRow;
-            break;
+                    case "marker":
+                        Display = SvgDisplay.Marker;
+                        break;
 
-          case "table-column-group":
-            Display = SvgDisplay.TableColumnGroup;
-            break;
+                    case "table":
+                        Display = SvgDisplay.Table;
+                        break;
 
-          case "table-column":
-            Display = SvgDisplay.TableColumn;
-            break;
+                    case "inline-table":
+                        Display = SvgDisplay.InlineTable;
+                        break;
 
-          case "table-cell":
-            Display = SvgDisplay.TableCell;
-            break;
+                    case "table-row-group":
+                        Display = SvgDisplay.TableRowGroup;
+                        break;
 
-          case "table-caption":
-            Display = SvgDisplay.TableCaption;
-            break;
+                    case "table-header-group":
+                        Display = SvgDisplay.TableHeaderGroup;
+                        break;
 
-          case "none":
-            Display = SvgDisplay.None;
-            break;
+                    case "table-footer-group":
+                        Display = SvgDisplay.TableFooterGroup;
+                        break;
 
-          default:
-            throw new NotImplementedException();
-        }
+                    case "table-row":
+                        Display = SvgDisplay.TableRow;
+                        break;
 
-      XAttribute fill_opacity_attribute = drawableContainerElement.Attribute("fill-opacity");
-      if (fill_opacity_attribute != null)
-        FillOpacity = SvgLength.Parse(fill_opacity_attribute.Value);
+                    case "table-column-group":
+                        Display = SvgDisplay.TableColumnGroup;
+                        break;
 
-      XAttribute stroke_opacity_attribute = drawableContainerElement.Attribute("stroke-opacity");
-      if (stroke_opacity_attribute != null)
-        StrokeOpacity = SvgLength.Parse(stroke_opacity_attribute.Value);
+                    case "table-column":
+                        Display = SvgDisplay.TableColumn;
+                        break;
 
-      XAttribute fill_attribute = drawableContainerElement.Attribute("fill");
-      if (fill_attribute != null)
-        Fill = SvgPaint.Parse(fill_attribute.Value);
+                    case "table-cell":
+                        Display = SvgDisplay.TableCell;
+                        break;
 
-      XAttribute stroke_attribute = drawableContainerElement.Attribute("stroke");
-      if (stroke_attribute != null)
-        Stroke = SvgPaint.Parse(stroke_attribute.Value);
+                    case "table-caption":
+                        Display = SvgDisplay.TableCaption;
+                        break;
 
-      XAttribute stroke_width_attribute = drawableContainerElement.Attribute("stroke-width");
-      if (stroke_width_attribute != null)
-        StrokeWidth = SvgLength.Parse(stroke_width_attribute.Value);
+                    case "none":
+                        Display = SvgDisplay.None;
+                        break;
 
-      XAttribute stroke_linecap_attribute = drawableContainerElement.Attribute("stroke-linecap");
-      if (stroke_linecap_attribute != null)
-        switch (stroke_linecap_attribute.Value)
-        {
-          case "butt":
-            StrokeLinecap = SvgStrokeLinecap.Butt;
-            break;
+                    default:
+                        throw new NotImplementedException();
+                }
 
-          case "round":
-            StrokeLinecap = SvgStrokeLinecap.Round;
-            break;
+            XAttribute fill_opacity_attribute = drawableContainerElement.Attribute("fill-opacity");
+            SvgLength.TryUpdate(ref FillOpacity, fill_opacity_attribute?.Value);
 
-          case "square":
-            StrokeLinecap = SvgStrokeLinecap.Square;
-            break;
+            XAttribute stroke_opacity_attribute = drawableContainerElement.Attribute("stroke-opacity");
+            SvgLength.TryUpdate(ref StrokeOpacity, stroke_opacity_attribute?.Value);
 
-          case "inherit":
-            StrokeLinecap = SvgStrokeLinecap.Inherit;
-            break;
+            XAttribute fill_attribute = drawableContainerElement.Attribute("fill");
+            if (fill_attribute != null)
+                Fill = SvgPaint.Parse(fill_attribute.Value);
 
-          default:
-            throw new NotImplementedException();
-        }
+            XAttribute stroke_attribute = drawableContainerElement.Attribute("stroke");
+            if (stroke_attribute != null)
+                Stroke = SvgPaint.Parse(stroke_attribute.Value);
 
-      XAttribute stroke_linejoin_attribute = drawableContainerElement.Attribute("stroke-linejoin");
-      if (stroke_linejoin_attribute != null)
-        switch (stroke_linejoin_attribute.Value)
-        {
-          case "miter":
-            StrokeLinejoin = SvgStrokeLinejoin.Miter;
-            break;
+            XAttribute stroke_width_attribute = drawableContainerElement.Attribute("stroke-width");
+            SvgLength.TryUpdate(ref StrokeWidth, stroke_width_attribute?.Value);
 
-          case "round":
-            StrokeLinejoin = SvgStrokeLinejoin.Round;
-            break;
+            XAttribute stroke_linecap_attribute = drawableContainerElement.Attribute("stroke-linecap");
+            if (stroke_linecap_attribute != null)
+                switch (stroke_linecap_attribute.Value)
+                {
+                    case "butt":
+                        StrokeLinecap = SvgStrokeLinecap.Butt;
+                        break;
 
-          case "bevel":
-            StrokeLinejoin = SvgStrokeLinejoin.Bevel;
-            break;
+                    case "round":
+                        StrokeLinecap = SvgStrokeLinecap.Round;
+                        break;
 
-          case "inherit":
-            StrokeLinejoin = SvgStrokeLinejoin.Inherit;
-            break;
+                    case "square":
+                        StrokeLinecap = SvgStrokeLinecap.Square;
+                        break;
 
-          default:
-            throw new NotSupportedException();
-        }
+                    case "inherit":
+                        StrokeLinecap = SvgStrokeLinecap.Inherit;
+                        break;
 
-      XAttribute stroke_miterlimit_attribute = drawableContainerElement.Attribute("stroke-miterlimit");
-      if (stroke_miterlimit_attribute != null)
-      {
-        if (stroke_miterlimit_attribute.Value == "inherit")
-          StrokeMiterlimit = Double.NaN;
-        else
-        {
-          double miterlimit = Double.Parse(stroke_miterlimit_attribute.Value, CultureInfo.InvariantCulture.NumberFormat);
-          //if(miterlimit < 1)
-          //throw new NotSupportedException("A miterlimit less than 1 is not supported.");
-          StrokeMiterlimit = miterlimit;
-        }
-      }
+                    default:
+                        throw new NotImplementedException();
+                }
 
-      XAttribute stroke_dasharray_attribute = drawableContainerElement.Attribute("stroke-dasharray");
-      if (stroke_dasharray_attribute != null)
-      {
-        if (stroke_dasharray_attribute.Value == "none")
-          StrokeDasharray = null;
-        else if (stroke_dasharray_attribute.Value == "inherit")
-          StrokeDasharray = new SvgLength[0];
-        else
-        {
-          List<SvgLength> lengths = new List<SvgLength>();
-          var lengthTokens = stroke_dasharray_attribute.Value.Replace(";", "")
-            .Trim()
-            .Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
-          foreach (string length in lengthTokens)
-          {
-            lengths.Add(SvgLength.Parse(length));
-          }
+            XAttribute stroke_linejoin_attribute = drawableContainerElement.Attribute("stroke-linejoin");
+            if (stroke_linejoin_attribute != null)
+                switch (stroke_linejoin_attribute.Value)
+                {
+                    case "miter":
+                        StrokeLinejoin = SvgStrokeLinejoin.Miter;
+                        break;
 
-          if (lengths.Count % 2 == 1)
-          {
-            StrokeDasharray = new SvgLength[lengths.Count * 2];
-            for (int i = 0; i < lengths.Count - 1; ++i)
+                    case "round":
+                        StrokeLinejoin = SvgStrokeLinejoin.Round;
+                        break;
+
+                    case "bevel":
+                        StrokeLinejoin = SvgStrokeLinejoin.Bevel;
+                        break;
+
+                    case "inherit":
+                        StrokeLinejoin = SvgStrokeLinejoin.Inherit;
+                        break;
+
+                    default:
+                        throw new NotSupportedException();
+                }
+
+            XAttribute stroke_miterlimit_attribute = drawableContainerElement.Attribute("stroke-miterlimit");
+            if (stroke_miterlimit_attribute != null)
             {
-              StrokeDasharray[i] = lengths[i];
-              StrokeDasharray[i + lengths.Count] = lengths[i];
+                if (stroke_miterlimit_attribute.Value == "inherit")
+                    StrokeMiterlimit = Double.NaN;
+                else
+                {
+                    double miterlimit = Double.Parse(stroke_miterlimit_attribute.Value, CultureInfo.InvariantCulture.NumberFormat);
+                    //if(miterlimit < 1)
+                    //throw new NotSupportedException("A miterlimit less than 1 is not supported.");
+                    StrokeMiterlimit = miterlimit;
+                }
             }
-          }
-          else
-            StrokeDasharray = lengths.ToArray();
 
-        }
-      }
+            XAttribute stroke_dasharray_attribute = drawableContainerElement.Attribute("stroke-dasharray");
+            if (stroke_dasharray_attribute != null)
+            {
+                if (stroke_dasharray_attribute.Value == "none")
+                    StrokeDasharray = null;
+                else if (stroke_dasharray_attribute.Value == "inherit")
+                    StrokeDasharray = new SvgLength[0];
+                else
+                {
+                    List<SvgLength> lengths = new List<SvgLength>();
+                    var lengthTokens = stroke_dasharray_attribute.Value.Replace(";", "")
+                      .Trim()
+                      .Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string length in lengthTokens)
+                    {
+                        lengths.Add(SvgLength.Parse(length));
+                    }
 
-      XAttribute stroke_dashoffset_attribute = drawableContainerElement.Attribute("stroke-dashoffset");
-      if (stroke_dashoffset_attribute != null)
-        StrokeDashoffset = SvgLength.Parse(stroke_dashoffset_attribute.Value);
+                    if (lengths.Count % 2 == 1)
+                    {
+                        StrokeDasharray = new SvgLength[lengths.Count * 2];
+                        for (int i = 0; i < lengths.Count - 1; ++i)
+                        {
+                            StrokeDasharray[i] = lengths[i];
+                            StrokeDasharray[i + lengths.Count] = lengths[i];
+                        }
+                    }
+                    else
+                        StrokeDasharray = lengths.ToArray();
 
-      XAttribute fill_rule_attribute = drawableContainerElement.Attribute("fill-rule");
-      if (fill_rule_attribute != null)
-        switch (fill_rule_attribute.Value)
-        {
-          case "nonzero":
-            FillRule = SvgFillRule.Nonzero;
-            break;
+                }
+            }
 
-          case "evenodd":
-            FillRule = SvgFillRule.Evenodd;
-            break;
+            XAttribute stroke_dashoffset_attribute = drawableContainerElement.Attribute("stroke-dashoffset");
+            SvgLength.TryUpdate(ref StrokeDashoffset, stroke_dashoffset_attribute?.Value);
 
-          case "inherit":
-            FillRule = SvgFillRule.Inherit;
-            break;
+            XAttribute fill_rule_attribute = drawableContainerElement.Attribute("fill-rule");
+            if (fill_rule_attribute != null)
+                switch (fill_rule_attribute.Value)
+                {
+                    case "nonzero":
+                        FillRule = SvgFillRule.Nonzero;
+                        break;
 
-          default:
-            throw new NotImplementedException();
-        }
+                    case "evenodd":
+                        FillRule = SvgFillRule.Evenodd;
+                        break;
+
+                    case "inherit":
+                        FillRule = SvgFillRule.Inherit;
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
 
             // color, color-interpolation, color-rendering
-            
+
             XAttribute width_attribute = drawableContainerElement.Attribute("width");
-            if (width_attribute != null)
-                Width = SvgLength.Parse(width_attribute.Value);
+            SvgLength.TryUpdate(ref Width, width_attribute?.Value);
             XAttribute height_attribute = drawableContainerElement.Attribute("height");
-            if (height_attribute != null)
-                Height = SvgLength.Parse(height_attribute.Value);
+            SvgLength.TryUpdate(ref Height, height_attribute?.Value);
 
             XAttribute preserveAspectRatio_attribute = drawableContainerElement.Attribute("preserveAspectRatio");
             if (preserveAspectRatio_attribute != null)
@@ -337,102 +330,102 @@ namespace Svg2Xaml
                         break;
                 }
             }
-      // overflow
+            // overflow
 
-    }
-
-    //==========================================================================
-    public virtual Geometry GetGeometry()
-    {
-      GeometryGroup geometry_group = new GeometryGroup();
-
-      foreach(SvgBaseElement element in Children)
-      {
-        if(element is SvgDrawableBaseElement)
-          geometry_group.Children.Add((element as SvgDrawableBaseElement).GetGeometry());
-        else if(element is SvgDrawableContainerBaseElement)
-          geometry_group.Children.Add((element as SvgDrawableContainerBaseElement).GetGeometry());
-      }
-
-      if(Transform != null)
-        geometry_group.Transform = Transform.ToTransform();
-
-      if(ClipPath != null)
-      {
-        SvgClipPathElement clip_path_element = Document.Elements[ClipPath.Id] as SvgClipPathElement;
-        if(clip_path_element != null)
-          return Geometry.Combine(geometry_group, clip_path_element.GetClipGeometry(), GeometryCombineMode.Exclude, null);
-      }
-
-      return geometry_group;
-    }
-
-    //==========================================================================
-    public virtual Drawing Draw()
-    {
-      DrawingGroup drawing_group = new DrawingGroup();
-
-      drawing_group.Opacity   = Opacity.ToDouble();
-      if(Transform != null)
-        drawing_group.Transform = Transform.ToTransform();
-
-      if (ViewBox != null)
-          drawing_group.Children.Add(ViewBox.Process());
-
-      foreach(SvgBaseElement child_element in Children)
-      {
-        SvgBaseElement element = child_element;
-        if(element is SvgUseElement)
-          element = (element as SvgUseElement).GetElement();
-
-        Drawing drawing = null;
-
-        if(element is SvgDrawableBaseElement)
-        {
-          if((element as SvgDrawableBaseElement).Display != SvgDisplay.None)
-            drawing = (element as SvgDrawableBaseElement).Draw();
-        }
-        else if(element is SvgDrawableContainerBaseElement)
-        {
-          if((element as SvgDrawableContainerBaseElement).Display != SvgDisplay.None)
-            drawing = (element as SvgDrawableContainerBaseElement).Draw();
         }
 
-        if(drawing != null)
-          drawing_group.Children.Add(drawing);
-      }
-
-      if(Filter != null)
-      {
-        SvgFilterElement filter_element = Document.Elements[Filter.Id] as SvgFilterElement;
-        if(filter_element != null)
-          drawing_group.BitmapEffect = filter_element.ToBitmapEffect();
-      }
-
-      if(ClipPath != null)
-      {
-        SvgClipPathElement clip_path_element = Document.Elements[ClipPath.Id] as SvgClipPathElement;
-        if(clip_path_element != null)
-          drawing_group.ClipGeometry= clip_path_element.GetClipGeometry();
-      }
-
-      if(Mask != null)
-      {
-        SvgMaskElement mask_element = Document.Elements[Mask.Id] as SvgMaskElement;
-        if(mask_element != null)
+        //==========================================================================
+        public virtual Geometry GetGeometry()
         {
-          DrawingBrush opacity_mask = mask_element.GetOpacityMask();
-          /*
-          if(Transform != null)
-            opacity_mask.Transform = Transform.ToTransform();
-          */
-          drawing_group.OpacityMask = opacity_mask;
-        }
-      }
-        
-      return drawing_group;
-    }
+            GeometryGroup geometry_group = new GeometryGroup();
 
-  } // class SvgDrawableContainerBaseElement
+            foreach (SvgBaseElement element in Children)
+            {
+                if (element is SvgDrawableBaseElement)
+                    geometry_group.Children.Add((element as SvgDrawableBaseElement).GetGeometry());
+                else if (element is SvgDrawableContainerBaseElement)
+                    geometry_group.Children.Add((element as SvgDrawableContainerBaseElement).GetGeometry());
+            }
+
+            if (Transform != null)
+                geometry_group.Transform = Transform.ToTransform();
+
+            if (ClipPath != null)
+            {
+                SvgClipPathElement clip_path_element = Document.Elements[ClipPath.Id] as SvgClipPathElement;
+                if (clip_path_element != null)
+                    return Geometry.Combine(geometry_group, clip_path_element.GetClipGeometry(), GeometryCombineMode.Exclude, null);
+            }
+
+            return geometry_group;
+        }
+
+        //==========================================================================
+        public virtual Drawing Draw()
+        {
+            DrawingGroup drawing_group = new DrawingGroup();
+
+            drawing_group.Opacity = Opacity.ToDouble();
+            if (Transform != null)
+                drawing_group.Transform = Transform.ToTransform();
+
+            if (ViewBox != null)
+                drawing_group.Children.Add(ViewBox.Process());
+
+            foreach (SvgBaseElement child_element in Children)
+            {
+                SvgBaseElement element = child_element;
+                if (element is SvgUseElement)
+                    element = (element as SvgUseElement).GetElement();
+
+                Drawing drawing = null;
+
+                if (element is SvgDrawableBaseElement)
+                {
+                    if ((element as SvgDrawableBaseElement).Display != SvgDisplay.None)
+                        drawing = (element as SvgDrawableBaseElement).Draw();
+                }
+                else if (element is SvgDrawableContainerBaseElement)
+                {
+                    if ((element as SvgDrawableContainerBaseElement).Display != SvgDisplay.None)
+                        drawing = (element as SvgDrawableContainerBaseElement).Draw();
+                }
+
+                if (drawing != null)
+                    drawing_group.Children.Add(drawing);
+            }
+
+            if (Filter != null)
+            {
+                SvgFilterElement filter_element = Document.Elements[Filter.Id] as SvgFilterElement;
+                if (filter_element != null)
+                    drawing_group.BitmapEffect = filter_element.ToBitmapEffect();
+            }
+
+            if (ClipPath != null)
+            {
+                SvgClipPathElement clip_path_element = Document.Elements[ClipPath.Id] as SvgClipPathElement;
+                if (clip_path_element != null)
+                    drawing_group.ClipGeometry = clip_path_element.GetClipGeometry();
+            }
+
+            if (Mask != null)
+            {
+                SvgMaskElement mask_element = Document.Elements[Mask.Id] as SvgMaskElement;
+                if (mask_element != null)
+                {
+                    DrawingBrush opacity_mask = mask_element.GetOpacityMask();
+                    /*
+                    if(Transform != null)
+                      opacity_mask.Transform = Transform.ToTransform();
+                    */
+                    drawing_group.OpacityMask = opacity_mask;
+                }
+            }
+
+            return drawing_group;
+        }
+
+    } // class SvgDrawableContainerBaseElement
 
 }

@@ -36,45 +36,37 @@ using System.Windows.Media;
 namespace Svg2Xaml
 {
 
-    //****************************************************************************
-    class SvgSkewTransform
-      : SvgTransform
+  //****************************************************************************
+  class SvgSkewTransform
+    : SvgTransform
+  {
+    public readonly double AngleX;
+    public readonly double AngleY;
+    
+    //==========================================================================
+    public SvgSkewTransform(double angleX, double angleY)
     {
-        public readonly double AngleX;
-        public readonly double AngleY;
+      AngleX = angleX;
+      AngleY = angleY;
+    }
 
-        //==========================================================================
-        public SvgSkewTransform(double angleX, double angleY)
-        {
-            AngleX = angleX;
-            AngleY = angleY;
-        }
+    //==========================================================================
+    public override Transform ToTransform()
+    {
+      return new SkewTransform(AngleX, AngleY);
+    }
 
-        //==========================================================================
-        public override Transform ToTransform()
-        {
-            return new SkewTransform(AngleX, AngleY);
-        }
+    //==========================================================================
+    public static new SvgSkewTransform Parse(string transform)
+    {
+      string[] tokens = transform.Split(new char[] { ' ', '\t', ',' }, StringSplitOptions.RemoveEmptyEntries);
+      if(tokens.Length != 2)
+        throw new FormatException("A skew transformation must have two values");
 
-        //==========================================================================
-        public static new SvgSkewTransform Parse(string transform)
-        {
-            if (transform.StartsWith("skewX"))
-            {
-                string token = transform.Substring(transform.IndexOf("(") + 1);
-                return new SvgSkewTransform(Double.Parse(token.Trim(), CultureInfo.InvariantCulture.NumberFormat),
-                                  0);
-            }
-            else if (transform.StartsWith("skewY"))
-            {
-                string token = transform.Substring(transform.IndexOf("(") + 1);
-                return new SvgSkewTransform(0,
-                                  Double.Parse(token, CultureInfo.InvariantCulture.NumberFormat));
-            }
-            else
-                throw new FormatException("Unknow skew transformation.");
-        }
+      return new SvgSkewTransform(Double.Parse(tokens[0].Trim(), CultureInfo.InvariantCulture.NumberFormat),
+                                  Double.Parse(tokens[1].Trim(), CultureInfo.InvariantCulture.NumberFormat));
+    }
 
-    } // class SvgSkewTransform
+  } // class SvgSkewTransform
 
 }

@@ -72,12 +72,10 @@ namespace Svg2Xaml
         }
 
       XAttribute width_attribute = patternElement.Attribute("width");
-      if(width_attribute != null)
-        Width = SvgLength.Parse(width_attribute.Value);
+      SvgLength.TryUpdate(ref Width, width_attribute?.Value);
 
       XAttribute height_attribute = patternElement.Attribute("height");
-      if(height_attribute != null)
-        Height = SvgLength.Parse(height_attribute.Value);
+      SvgLength.TryUpdate(ref Height, height_attribute?.Value);
 
     }
 

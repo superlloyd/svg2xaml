@@ -80,8 +80,51 @@ namespace Svg2Xaml
       return new SvgLength(Double.Parse(value, CultureInfo.InvariantCulture.NumberFormat), unit);
     }
 
-    //==========================================================================
-    public double ToDouble()
+        public static bool TryUpdate(ref SvgLength result, string value)
+        {
+            if (TryParse(value, out var x))
+            {
+                result = x;
+                return true;
+            }
+            else 
+            {
+                return false;
+            }
+        }
+        public static bool TryParse(string value, out SvgLength result)
+        {
+            result = null;
+
+            if (value == null)
+                return false;
+
+            value = value.Trim();
+            if (value == "")
+                return false;
+
+            if (value == "inherit")
+            {
+                result = new SvgLength(Double.NaN, null);
+                return true;
+            }
+
+            string unit = null;
+
+            foreach (string unit_identifier in new string[] { "in", "cm", "mm", "pt", "pc", "px", "%" })
+                if (value.EndsWith(unit_identifier))
+                {
+                    unit = unit_identifier;
+                    value = value.Substring(0, value.Length - unit_identifier.Length).Trim();
+                    break;
+                }
+
+            result = new SvgLength(Double.Parse(value, CultureInfo.InvariantCulture.NumberFormat), unit);
+            return true;
+        }
+
+        //==========================================================================
+        public double ToDouble()
     {
       return Value;
     }

@@ -32,85 +32,82 @@ using System.Xml.Linq;
 
 namespace Svg2Xaml
 {
-  
-  //****************************************************************************
-  /// <summary>
-  ///   Represents an &lt;circle&gt; element.
-  /// </summary>
-  class SvgCircleElement
-    : SvgDrawableBaseElement
-  {
-    //==========================================================================
+
+    //****************************************************************************
     /// <summary>
-    ///   The x-coordinate of the circle's center.
+    ///   Represents an &lt;circle&gt; element.
     /// </summary>
-    public readonly SvgCoordinate CenterX = new SvgCoordinate(0);
-
-    //==========================================================================
-    /// <summary>
-    ///   The y-coordinate of the circle's center.
-    /// </summary>
-    public readonly SvgCoordinate CenterY = new SvgCoordinate(0);
-
-    //==========================================================================
-    /// <summary>
-    ///   The circle's radius.
-    /// </summary>
-    public readonly SvgLength Radius = new SvgLength(0);
-
-    //==========================================================================
-    public SvgCircleElement(SvgDocument document, SvgBaseElement parent, XElement circleElement)
-      : base(document, parent, circleElement)
+    class SvgCircleElement
+      : SvgDrawableBaseElement
     {
-      XAttribute cx_attribute = circleElement.Attribute("cx");
-      if(cx_attribute != null)
-        CenterX = SvgCoordinate.Parse(cx_attribute.Value);
+        //==========================================================================
+        /// <summary>
+        ///   The x-coordinate of the circle's center.
+        /// </summary>
+        public readonly SvgCoordinate CenterX = new SvgCoordinate(0);
 
-      XAttribute cy_attribute = circleElement.Attribute("cy");
-      if(cy_attribute != null)
-        CenterY = SvgCoordinate.Parse(cy_attribute.Value);
+        //==========================================================================
+        /// <summary>
+        ///   The y-coordinate of the circle's center.
+        /// </summary>
+        public readonly SvgCoordinate CenterY = new SvgCoordinate(0);
 
-      XAttribute r_attribute = circleElement.Attribute("r");
-      if(r_attribute != null)
-        Radius = SvgLength.Parse(r_attribute.Value);
-    }
+        //==========================================================================
+        /// <summary>
+        ///   The circle's radius.
+        /// </summary>
+        public readonly SvgLength Radius = new SvgLength(0);
 
-    //==========================================================================
-    public override Geometry GetBaseGeometry()
-    {
-      var eg = new EllipseGeometry(
-        new Point(CenterX.ToDouble(), 
-        CenterY.ToDouble()),
-        Radius.ToDouble(),
-        Radius.ToDouble());
-      return eg;
-    }
-
-    public override Drawing GetBaseDrawing()
-    {
-      var bd = base.GetBaseDrawing();
-      var gd = bd as GeometryDrawing;
-      if (gd != null && gd.Brush != null)
-      {
-        if (this.Transform != null)
+        //==========================================================================
+        public SvgCircleElement(SvgDocument document, SvgBaseElement parent, XElement circleElement)
+          : base(document, parent, circleElement)
         {
-          var tf = this.Transform.ToTransform();
-          if (gd.Brush.Transform != null)
-          {
-            var tg = new TransformGroup();
-            tg.Children.Add(gd.Brush.Transform);
-            tg.Children.Add(tf);
-            gd.Brush.Transform = tg;
-          }
-          else
-          {
-            gd.Brush.Transform = tf;
-          }
-        }
-      }
+            XAttribute cx_attribute = circleElement.Attribute("cx");
+            SvgCoordinate.TryUpdate(ref CenterX, cx_attribute?.Value);
 
-      return bd;
-    }
-  } // class SvgCircleElement
+            XAttribute cy_attribute = circleElement.Attribute("cy");
+            SvgCoordinate.TryUpdate(ref CenterY, cy_attribute?.Value);
+
+            XAttribute r_attribute = circleElement.Attribute("r");
+            SvgLength.TryUpdate(ref Radius, r_attribute?.Value);
+        }
+
+        //==========================================================================
+        public override Geometry GetBaseGeometry()
+        {
+            var eg = new EllipseGeometry(
+              new Point(CenterX.ToDouble(),
+              CenterY.ToDouble()),
+              Radius.ToDouble(),
+              Radius.ToDouble());
+            return eg;
+        }
+
+        public override Drawing GetBaseDrawing()
+        {
+            var bd = base.GetBaseDrawing();
+            var gd = bd as GeometryDrawing;
+            if (gd != null && gd.Brush != null)
+            {
+                if (this.Transform != null)
+                {
+                    var tf = this.Transform.ToTransform();
+                    if (gd.Brush.Transform != null)
+                    {
+                        var tg = new TransformGroup();
+                        tg.Children.Add(gd.Brush.Transform);
+                        tg.Children.Add(tf);
+                        gd.Brush.Transform = tg;
+                    }
+                    else
+                    {
+                        gd.Brush.Transform = tf;
+                    }
+                }
+            }
+
+            return bd;
+        }
+    } // class SvgCircleElement
 
 }

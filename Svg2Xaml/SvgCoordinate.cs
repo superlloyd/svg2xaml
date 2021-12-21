@@ -30,37 +30,62 @@ namespace Svg2Xaml
 {
 
 
-  //****************************************************************************
-  /// <summary>
-  ///   A coordinate.
-  /// </summary>
-  class SvgCoordinate
-    : SvgLength
-  {
-
-    //==========================================================================
-    public SvgCoordinate(double value)
-      : base(value)
+    //****************************************************************************
+    /// <summary>
+    ///   A coordinate.
+    /// </summary>
+    class SvgCoordinate
+      : SvgLength
     {
-      // ...
-    }
 
-    //==========================================================================
-    public SvgCoordinate(double value, string unit)
-      : base(value, unit)
-    {
-      // ...
-    }
+        //==========================================================================
+        public SvgCoordinate(double value)
+          : base(value)
+        {
+            // ...
+        }
 
-    //==========================================================================
-    public static new SvgCoordinate Parse(string value)
-    {
-      SvgLength length = SvgLength.Parse(value);
+        //==========================================================================
+        public SvgCoordinate(double value, string unit)
+          : base(value, unit)
+        {
+            // ...
+        }
 
-      return new SvgCoordinate(length.Value, length.Unit);
+        //==========================================================================
+        public static new SvgCoordinate Parse(string value)
+        {
+            SvgLength length = SvgLength.Parse(value);
 
-    }
+            return new SvgCoordinate(length.Value, length.Unit);
 
-  } // class SvgCoordinate
+        }
+        public static bool TryUpdate(ref SvgCoordinate result, string value)
+        {
+            if (TryParse(value, out var x))
+            {
+                result = x;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public static bool TryParse(string value, out SvgCoordinate result)
+        {
+            if (SvgLength.TryParse(value, out var length))
+            {
+                result = new SvgCoordinate(length.Value, length.Unit);
+                return true;
+            }
+            else
+            {
+                result = default(SvgCoordinate);
+                return false;
+            }
+        }
+
+    } // class SvgCoordinate
 
 }

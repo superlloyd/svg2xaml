@@ -47,16 +47,14 @@ namespace Svg2Xaml
       : base(document, parent, stopElement)
     {
       XAttribute offset_attribute = stopElement.Attribute("offset");
-      if(offset_attribute != null)
-        Offset = SvgLength.Parse(offset_attribute.Value);
+      SvgLength.TryUpdate(ref Offset, offset_attribute?.Value);
 
       XAttribute stop_color_attribute = stopElement.Attribute("stop-color");
       if(stop_color_attribute != null)
         Color = SvgColor.Parse(stop_color_attribute.Value);
 
       XAttribute stop_opacity_attribute = stopElement.Attribute("stop-opacity");
-      if(stop_opacity_attribute != null)
-        Opacity = SvgLength.Parse(stop_opacity_attribute.Value);
+      SvgLength.TryUpdate(ref Opacity, stop_opacity_attribute?.Value);
     }
 
     //==========================================================================

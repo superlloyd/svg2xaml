@@ -31,37 +31,36 @@ using System.Xml.Linq;
 
 namespace Svg2Xaml
 {
-  
-  //****************************************************************************
-  /// <summary>
-  ///   Represents an &lt;feGaussianBlur&gt; element.
-  /// </summary>
-  class SvgFEGaussianBlurElement
-    : SvgFilterEffectBaseElement
-  {
 
-    //==========================================================================
-    public readonly SvgLength StdDeviation = new SvgLength(1.0);
-
-    //==========================================================================
-    public SvgFEGaussianBlurElement(SvgDocument document, SvgBaseElement parent, XElement feGaussianBlurElement)
-      : base(document, parent, feGaussianBlurElement)
+    //****************************************************************************
+    /// <summary>
+    ///   Represents an &lt;feGaussianBlur&gt; element.
+    /// </summary>
+    class SvgFEGaussianBlurElement
+      : SvgFilterEffectBaseElement
     {
-      XAttribute std_deviation_attribute = feGaussianBlurElement.Attribute("stdDeviation");
-      if(std_deviation_attribute != null)
-        StdDeviation = SvgCoordinate.Parse(std_deviation_attribute.Value);
 
-    }
+        //==========================================================================
+        public readonly SvgLength StdDeviation = new SvgLength(1.0);
 
-    //==========================================================================
-    public override BitmapEffect ToBitmapEffect()
-    {
-      BlurBitmapEffect blur_bitmap_effect = new BlurBitmapEffect();
-      blur_bitmap_effect.Radius = StdDeviation.ToDouble();
-      blur_bitmap_effect.KernelType = KernelType.Box;
-      return blur_bitmap_effect;
-    }
+        //==========================================================================
+        public SvgFEGaussianBlurElement(SvgDocument document, SvgBaseElement parent, XElement feGaussianBlurElement)
+          : base(document, parent, feGaussianBlurElement)
+        {
+            XAttribute std_deviation_attribute = feGaussianBlurElement.Attribute("stdDeviation");
+            SvgCoordinate.TryUpdate(ref StdDeviation, std_deviation_attribute?.Value);
 
-  } // class SvgFEGaussianBlurElement
+        }
+
+        //==========================================================================
+        public override BitmapEffect ToBitmapEffect()
+        {
+            BlurBitmapEffect blur_bitmap_effect = new BlurBitmapEffect();
+            blur_bitmap_effect.Radius = StdDeviation.ToDouble();
+            blur_bitmap_effect.KernelType = KernelType.Box;
+            return blur_bitmap_effect;
+        }
+
+    } // class SvgFEGaussianBlurElement
 
 }
