@@ -33,5 +33,5 @@
         Title="Svg2XamlTestExtension" 
         Height="256" 
         Width="256">
-    <Image Source="{svg2xaml:SvgImage test.svg,IgnoreEffects=false}"/>
+    <Image Source="{svg2xaml:SvgImage SVG/test.svg,IgnoreEffects=false}"/>
 </Window>
