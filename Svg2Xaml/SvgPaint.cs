@@ -47,7 +47,7 @@ namespace Svg2Xaml
       if(value == "")
         throw new ArgumentException("value must not be empty", "value");
 
-      if(value.StartsWith("url"))
+      if(value.ToLower().StartsWith("url"))
       {
         string url = value.Substring(3).Trim();
         if(url.StartsWith("(") && url.EndsWith(")"))
@@ -78,7 +78,7 @@ namespace Svg2Xaml
         }
       }
 
-      if(value.StartsWith("rgb"))
+      if(value.ToLower().StartsWith("rgb"))
       {
         string color = value.Substring(3).Trim();
         if(color.StartsWith("(") && color.EndsWith(")"))
